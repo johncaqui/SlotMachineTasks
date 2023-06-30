@@ -31,6 +31,7 @@ public class task2
 
             int symbols_pay = 0;
 
+            // Calculate payout of symbols win
             if(unique_symbols_wins.size() > 0)
             {
                 symbols_pay = calculate_symbols_win(unique_symbols_wins);
@@ -39,6 +40,7 @@ public class task2
 
             int bonus_pay = 0;
 
+            // Calculate bonus round payout
             if(bonus_round == true)
             {
                 bonus_count += 1;
@@ -62,6 +64,7 @@ public class task2
 
     public static String[][] play_reels()
     {
+        // Define symbols of all reels
         String[] reel0 = {"L4", "L3", "L2", "B1", "H2", "H2", "H2", "L1", "L1", "L1", "H3", "H1", "H2",
                 "L2", "L2", "L2", "W1", "L3", "L3", "L3", "H3", "H3", "H3", "L4", "L4", "L4", "H3", "L1",
                 "L2", "L4", "H3", "L3", "L3", "L3", "B1", "L2", "L2", "L2", "L2", "H3", "H3", "H3", "L4",
@@ -81,12 +84,14 @@ public class task2
 
         String[][] output_reels = new String[3][3];
 
+        // Loop through reels to choose symbol for each reel
         for(int i = 0; i < reels.length; i ++)
         {
             int reel_stop = rand.nextInt(reels[i].length);
 
             output_reels[0][i] = reels[i][reel_stop];
 
+            // if symbol after reel stop goes out of array range, loop back to beginning by getting first element
             if (reel_stop + 1 >= reels[i].length)
             {
                 output_reels[1][i] = reels[i][(reel_stop) - (reels[i].length-1)];
@@ -108,6 +113,7 @@ public class task2
 
     public static List<String[]> check_paylines(String[][] output_reels)
     {
+        // Define the corrodinates for each square for each payline
         Integer[][][] paylines = {{{0, 0}, {0, 1}, {0, 2}},
                                  {{1, 0}, {1, 1}, {1, 2}},
                                  {{2, 0}, {2, 1}, {2, 2}},
@@ -119,7 +125,6 @@ public class task2
         List<String[]> unique_symbols_wins = new ArrayList<>();
 
         // Check Paylines to see if player won anything
-
         for(Integer[][] payline : paylines)
         {
             for (int j = 0; j < payline.length; j++)
@@ -131,10 +136,13 @@ public class task2
 
             String[] unique_symbols = Arrays.stream(symbols).distinct().toArray(String[]::new);
 
+            // If Payline only contains 1 symbol which isn't bonus, then it is a winning symbol
             if (unique_symbols.length == 1 && !Arrays.asList(unique_symbols).contains("B1"))
             {
                 unique_symbols_wins.add(unique_symbols);
-            } else if (unique_symbols.length == 2 && Arrays.asList(unique_symbols).contains("W1") && !Arrays.asList(unique_symbols).contains("B1"))
+            }
+            // If Payline contains 2 symbols which aren't bonus, and which contains 2 winning symbols, with one being a wild symbol, then it is a winning symbol
+            else if (unique_symbols.length == 2 && Arrays.asList(unique_symbols).contains("W1") && !Arrays.asList(unique_symbols).contains("B1"))
             {
                 unique_symbols_wins.add(unique_symbols);
             }
@@ -176,12 +184,15 @@ public class task2
 
         int symbols_pay = 0;
 
+        // For each unique symbol win, check whether 1 or 2 unique symbols are found
         for(String[] unique_symbols : unique_symbols_wins)
         {
+            // If 1 is found, then get the value of that symbol from the dictionary
             if (unique_symbols.length == 1)
             {
                 symbols_pay += symbol_winnings_dict.get(unique_symbols[0]);
             }
+            // If 2 are found, then get the value of the symbol which isn't a wild symbol from the dictionary
             else
             {
                 for(int j = 0; j < unique_symbols.length; j ++)
@@ -212,10 +223,13 @@ public class task2
         coin_weight_pairs.add(new Pair<>(3, 300.0));
         coin_weight_pairs.add(new Pair<>(2, 350.0));
 
+        // Define Enumerated Distribution which easily allows for weighted random coin selection
         EnumeratedDistribution coin_weight_distribution = new EnumeratedDistribution<>(coin_weight_pairs);
 
+        // Randomly choose coin from defined coins and their weights
         int coin_val = (int) coin_weight_distribution.sample();
 
+        // Randomly choose dice for multiplier
         int dice_val = rand.nextInt(6) + 1;
 
         int bet_val = 10;
